@@ -1,10 +1,27 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import appConfig from '../config.json'
+import { createClient } from '@supabase/supabase-js'
+
+const SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzM2MjY5NiwiZXhwIjoxOTU4OTM4Njk2fQ.HRKrPNhodDXy82xCVchmOqWxKZR7WwLBrjU2KEQAYAU'
+const SUPABASE_URL = 'https://hcjrjtkmzciowzbrvios.supabase.co'
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
 
 export default function ChatPage() {
   const [message, setMessage] = useState('')
   const [messageList, setMessageList] = useState([])
+  
+  useEffect(() => {
+    supabaseClient
+      .from('mensagens') // banco de dados
+      .select('*') // campos
+      .order('id', {ascending: false})
+      .then( ({data}) => {
+        setMessageList(data)
+      })
+  }, [messageList])
 
   function handleChange(event) {
     setMessage(event.target.value)
@@ -12,12 +29,24 @@ export default function ChatPage() {
 
   function handleNewMessage(newMessage) {
     const messageComplete = {
-      id: messageList.length + 1,
+      // id: messageList.length + 1,
       from: 'Raffael-Eloi',
       text: newMessage
-    }
-    setMessageList([messageComplete, ...messageList])
-    setMessage('')
+    };
+
+    supabaseClient
+    .from('mensagens')
+    .insert([
+      messageComplete
+    ])
+    .then(({ data }) => {
+      setMessageList([
+        ...data[0],
+        messageComplete
+      ])
+      setMessage('')
+    })
+
   }
 
   return (
@@ -179,7 +208,7 @@ function MessageList(props) {
                   display: 'inline-block',
                   marginRight: '8px'
                 }}
-                src={`https://github.com/vanessametonini.png`}
+                src={`https://github.com/${currentMessage.from}.png`}
               />
               <Text tag="strong">{currentMessage.from}</Text>
               <Text

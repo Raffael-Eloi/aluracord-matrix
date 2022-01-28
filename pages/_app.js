@@ -12,13 +12,15 @@ function GlobalStyle() {
         font-family: 'Open Sans', sans-serif;
       }
 
-      /* App fit Height */ 
-      html, body, #__next {
+      /* App fit Height */
+      html,
+      body,
+      #__next {
         min-height: 100vh;
         display: flex;
         flex: 1;
       }
-      
+
       #__next {
         flex: 1;
       }
@@ -27,16 +29,20 @@ function GlobalStyle() {
         flex: 1;
       }
 
-      /* ./App fit Height */ 
+      /* ./App fit Height */
     `}</style>
-  );
+  )
 }
 
-export default function CustomApp({Component, PageProps}) {
+// function handleChatMessages() {
+//   return ();
+// }
+
+export default function CustomApp({ Component, PageProps }) {
   return (
-      <>
-        <GlobalStyle />
-        <Component {...PageProps} />
-      </>
-    )
+    <>
+      <GlobalStyle />
+      <Component {...PageProps} />
+    </>
+  )
 }

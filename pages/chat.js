@@ -137,7 +137,7 @@ function Header() {
 
 function MessageList(props) {
   function handleDeleteMessage(messageForDelete) {
-    props.setMessageList(messageList.splice(messageForDelete - 1, 1))
+    // props.setMessageList(messageList.splice(messageForDelete - 1, 1))
   }
 
   return (
@@ -200,6 +200,7 @@ function MessageList(props) {
               onClick={event => {
                 event.preventDefault()
                 console.log({ currentMessage })
+                // console.log(currentMessage.parentChild)
                 handleDeleteMessage(currentMessage)
               }}
               buttonColors={{

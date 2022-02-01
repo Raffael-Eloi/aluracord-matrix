@@ -1,27 +1,56 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import appConfig from '../config.json'
 import { createClient } from '@supabase/supabase-js'
+import { ButtonSendSticker } from '../src/components/ButtonSendSticker.js'
 
 const SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzM2MjY5NiwiZXhwIjoxOTU4OTM4Njk2fQ.HRKrPNhodDXy82xCVchmOqWxKZR7WwLBrjU2KEQAYAU'
 const SUPABASE_URL = 'https://hcjrjtkmzciowzbrvios.supabase.co'
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-
 export default function ChatPage() {
+  const roteamento = useRouter()
+  const loggedUser = roteamento.query.username
   const [message, setMessage] = useState('')
-  const [messageList, setMessageList] = useState([])
-  
+  const [messageList, setMessageList] = useState([
+    // {
+    //   id: 1,
+    //   from: 'Raffael-Eloi',
+    //   text: ':sticker:https://www.alura.com.br/imersao-react-4/assets/figurinhas/Figurinha_7.png'
+    // },
+    // {
+    //   id: 2,
+    //   from: 'Raffael-Eloi',
+    //   text: ':sticker:https://www.alura.com.br/imersao-react-4/assets/figurinhas/Figurinha_11.png'
+    // }
+  ])
+
   useEffect(() => {
     supabaseClient
       .from('mensagens') // banco de dados
       .select('*') // campos
-      .order('id', {ascending: false})
-      .then( ({data}) => {
+      .order('id', { ascending: false })
+      .then(({ data }) => {
         setMessageList(data)
       })
-  }, [messageList])
+    messageListnerRealTime(newMessage => {
+      console.log('MessageListnerRealTime: ', newMessage)
+      setMessageList(currentListValue => {
+        return [newMessage, ...currentListValue]
+      })
+    })
+  }, [])
+
+  function messageListnerRealTime(addMessage) {
+    return supabaseClient
+      .from('mensagens')
+      .on('INSERT', liveResponse => {
+        addMessage(liveResponse)
+      })
+      .subscribe()
+  }
 
   function handleChange(event) {
     setMessage(event.target.value)
@@ -30,23 +59,17 @@ export default function ChatPage() {
   function handleNewMessage(newMessage) {
     const messageComplete = {
       // id: messageList.length + 1,
-      from: 'Raffael-Eloi',
+      from: loggedUser,
       text: newMessage
-    };
+    }
 
     supabaseClient
-    .from('mensagens')
-    .insert([
-      messageComplete
-    ])
-    .then(({ data }) => {
-      setMessageList([
-        ...data[0],
-        messageComplete
-      ])
-      setMessage('')
-    })
-
+      .from('mensagens')
+      .insert([messageComplete])
+      .then(({ data }) => {
+        console.log('Criando mensagem: ', data)
+      })
+    setMessage('')
   }
 
   return (
@@ -109,7 +132,7 @@ export default function ChatPage() {
                 }
               }}
               styleSheet={{
-                width: '80%',
+                width: '70%',
                 border: '0',
                 resize: 'none',
                 borderRadius: '5px',
@@ -126,11 +149,22 @@ export default function ChatPage() {
                 event.preventDefault()
                 handleNewMessage(message)
               }}
+              styleSheet={{
+                marginRight: '12px'
+              }}
               buttonColors={{
                 contrastColor: appConfig.theme.colors.neutrals['000'],
                 mainColor: appConfig.theme.colors.primary[500],
                 mainColorLight: appConfig.theme.colors.primary[400],
                 mainColorStrong: appConfig.theme.colors.primary[600]
+              }}
+            />
+
+            {/* Callback */}
+            <ButtonSendSticker
+              onStickerClick={sticker => {
+                console.log('[USANDO O COMPONENT] Salva esse sticker no banco')
+                handleNewMessage(':sticker: ' + sticker)
               }}
             />
           </Box>
@@ -222,7 +256,12 @@ function MessageList(props) {
                 {new Date().toLocaleDateString()}
               </Text>
             </Box>
-            {currentMessage.text}
+            {/* Declarativo  */}
+            {currentMessage.text.startsWith(':sticker:') ? (
+              <Image src={currentMessage.text.replace(':sticker:', '')} />
+            ) : (
+              currentMessage.text
+            )}
             <Button
               type="submit"
               label="Excluir"

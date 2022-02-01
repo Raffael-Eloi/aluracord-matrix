@@ -1,10 +1,10 @@
-import appConfig from "../config.json";
-import { Box, Button, Text, TextField, Image } from '@skynexui/components';
-import {useState} from "react";
-import {useRouter} from "next/router";
+import appConfig from '../config.json'
+import { Box, Button, Text, TextField, Image } from '@skynexui/components'
+import { useState } from 'react'
+import { useRouter } from 'next/router'
 
 function Title(props) {
-  const Tag = props.tag || 'h1'; // Só pega esse valor se não tiver passado nada
+  const Tag = props.tag || 'h1' // Só pega esse valor se não tiver passado nada
   return (
     <>
       <Tag>{props.children}</Tag>
@@ -15,7 +15,7 @@ function Title(props) {
         }
       `}</style>
     </>
-  );
+  )
 }
 
 // Componente React
@@ -33,27 +33,32 @@ function Title(props) {
 
 export default function PaginaInicial() {
   // const username = 'Raffael-Eloi';
-  const [username, setUsername] = useState("");
-  const roteamento = useRouter();
+  const [username, setUsername] = useState('')
+  const roteamento = useRouter()
   // console.log(roteamento);
 
   function getGitHubDatas() {
-    const url = "https://api.github.com/users/Raffael-Eloi";
+    const url = 'https://api.github.com/users/Raffael-Eloi'
     fetch(url)
-    .then( response => response.json())
-    .then( dados => console.log(dados))
+      .then(response => response.json())
+      .then(dados => console.log(dados))
   }
 
-    getGitHubDatas()
+  // getGitHubDatas()
 
   return (
     <>
       <Box
         styleSheet={{
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           backgroundColor: appConfig.theme.colors.primary[500],
-          backgroundImage: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)',
-          backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
+          backgroundImage:
+            'url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+          backgroundBlendMode: 'multiply'
         }}
       >
         <Box
@@ -63,29 +68,43 @@ export default function PaginaInicial() {
             justifyContent: 'space-between',
             flexDirection: {
               xs: 'column',
-              sm: 'row',
+              sm: 'row'
             },
-            width: '100%', maxWidth: '700px',
-            borderRadius: '5px', padding: '32px', margin: '16px',
+            width: '100%',
+            maxWidth: '700px',
+            borderRadius: '5px',
+            padding: '32px',
+            margin: '16px',
             boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
-            backgroundColor: appConfig.theme.colors.neutrals[700],
+            backgroundColor: appConfig.theme.colors.neutrals[700]
           }}
         >
           {/* Formulário */}
           <Box
             as="form"
-            onSubmit={ (event) => {
-              event.preventDefault();
-              window.location.href = "/chat";
-              roteamento.push("/chat");
+            onSubmit={event => {
+              event.preventDefault()
+              // window.location.href = "/chat";
+              roteamento.push(`/chat?username=${username}`)
             }}
             styleSheet={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: { xs: '100%', sm: '50%' },
+              textAlign: 'center',
+              marginBottom: '32px'
             }}
           >
             <Title tag="h2">Boas vindas de volta!</Title>
-            <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
+            <Text
+              variant="body3"
+              styleSheet={{
+                marginBottom: '32px',
+                color: appConfig.theme.colors.neutrals[300]
+              }}
+            >
               {appConfig.name}
             </Text>
 
@@ -96,36 +115,34 @@ export default function PaginaInicial() {
             <TextField
               value={username}
               fullWidth
-              onChange={(event) => {
-                setUsername(event.target.value);
+              onChange={event => {
+                setUsername(event.target.value)
               }}
               textFieldColors={{
                 neutral: {
                   textColor: appConfig.theme.colors.neutrals[200],
                   mainColor: appConfig.theme.colors.neutrals[900],
                   mainColorHighlight: appConfig.theme.colors.primary[500],
-                  backgroundColor: appConfig.theme.colors.neutrals[800],
-                },
+                  backgroundColor: appConfig.theme.colors.neutrals[800]
+                }
               }}
             />
             <Button
-              type='submit'
-              label='Entrar'
+              type="submit"
+              label="Entrar"
               fullWidth
               buttonColors={{
-                contrastColor: appConfig.theme.colors.neutrals["000"],
+                contrastColor: appConfig.theme.colors.neutrals['000'],
                 mainColor: appConfig.theme.colors.primary[500],
                 mainColorLight: appConfig.theme.colors.primary[400],
-                mainColorStrong: appConfig.theme.colors.primary[600],
+                mainColorStrong: appConfig.theme.colors.primary[600]
               }}
             />
-            
-            <Title tag="h2">{getGitHubDatas()}</Title>
 
+            <Title tag="h2">{/*getGitHubDatas()*/}</Title>
           </Box>
           {/* Formulário */}
 
-          
           {/* Photo Area */}
           <Box
             styleSheet={{
@@ -139,15 +156,19 @@ export default function PaginaInicial() {
               borderColor: appConfig.theme.colors.neutrals[999],
               borderRadius: '10px',
               flex: 1,
-              minHeight: '240px',
+              minHeight: '240px'
             }}
           >
             <Image
               styleSheet={{
                 borderRadius: '50%',
-                marginBottom: '16px',
+                marginBottom: '16px'
               }}
-              src={username.length>2 ? `https://github.com/${username}.png` : null}
+              src={
+                username.length > 2
+                  ? `https://github.com/${username}.png`
+                  : null
+              }
             />
             <Text
               variant="body4"
@@ -165,5 +186,5 @@ export default function PaginaInicial() {
         </Box>
       </Box>
     </>
-  );
+  )
 }
